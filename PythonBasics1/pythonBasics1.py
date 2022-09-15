@@ -10,7 +10,6 @@
 def odd_range(num1, num2):
   oddArray = []
 
-
   for x in range (num1, num2):
     if (x % 2 != 0):
       oddArray.append(x)
@@ -22,9 +21,14 @@ def odd_range(num1, num2):
 # The function should return True indicating that string s has a lower case char
 # otherwise return False
 def has_lower_case(s):
-  # YOUR CODE HERE
+  state = False
   
-  return
+  for x in s:
+   if x.islower() == True:
+    state = True
+    break 
+
+  return state
 
 # Part C. fizz_buzz
 # Define a function fizz_buzz(num) that takes an integer num
