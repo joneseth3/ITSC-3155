@@ -15,35 +15,59 @@ from re import A
 
 
 def count_threes(n):
-  j = 0
+	n = list(str(n)) 
+	dic ={}
 
-  for x in range(0,n):
-    if x % 3 == 0:
-      j += 1
-    else:
-      continue
-  return j
+	dic[3] = dic[6] = dic[9] = 0
+	
+	for i in n:
+		j = int(i)
+		if j % 3 == 0 and j != 0:
+			dic[j] = dic[j] + 1
+
+
+	max = -1
+	index = -1
+	for i,j in dic.items():
+		if j > max:
+			max = j
+			index = i
+
+	return index
 
 
 # Part B. longest_consecutive_repeating_char
 # Define a function longest_consecutive_repeating_char(s) that takes
 # a string s and returns the character that has the longest consecutive repeat.
 def longest_consecutive_repeating_char(s):
-  max_count = 0
-  max_char = None
-  prev_char = None
+  s = list(s)
+  list_length = len(s)
+  count = 1
 
-  for current in s:
-    if prev_char == current:
-      count += 1
-    else: 
-      count = 1
-    if count > max_count:
-      max_count = count
-      max_char = current
-    prev_char = current
+  dic = {}
+  for i in range(0,list_length -1):
+    if(s[i] != s[i+1]):
+      if((s[i] in dic) and dic[s[i]] > count):
+        continue
+      else:
+        dic[s[i]] = count
+        count = 1
+    else:
+      count = count + 1
+
+  dic[s[list_length -1]] = count
+
+  max = -1
+  for i,j in dic.items():
+    if j > max:
+      max = j
   
-  return max_char
+  lst = []
+  for i,j in dic.items():
+    if j == max:
+      lst.append(i)
+
+  return lst
 
 
 # Part C. is_palindrome
