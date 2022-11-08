@@ -21,11 +21,19 @@
         <h1>Listing notes</h1>
 
         <table>
-            <tr>
-                <th>Title</th>
-                <th>Date</th>
-            </tr>
-            {% for key, value in notes.items() %}
+
+            <table>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                </tr>
+                {% for note in notes%}
+                <tr>
+                    <td><a href="{{ url_for('get_note', note_id=note.id) }}">{{ note.title }}</a></td>
+                    <td>{{ note.date }}</td>
+                </tr>
+   
+            </table>
             <tr>
                 <td><a href="notes/{{key}}"> {{ value.title }} </a></td>
                 <td>{{ value.date }}</td>
