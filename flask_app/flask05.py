@@ -76,12 +76,17 @@ def new_note():
         return render_template('new.html', user = a_user)
 
 
+
+
 @app.route('/notes/edit/<note_id>')
 def update_note(note_id):
-    a_user = db.session.query(User).filter_by(email='mogli@uncc.edu').one()
+    a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
 
     my_note = db.session.query(Note).filter_by(id=note_id).one()
 
     return render_template('new.html', note=my_note, user=a_user)
+
+
+
 
 app.run(host=os.getenv('IP', '127.0.0.1'),port=int(os.getenv('PORT', 5000)),debug=True)
