@@ -1,9 +1,7 @@
 # FLASK Tutorial 1 -- We show the bare bones code to get an app up and running
+import os
+from flask import Flask, render_template
 
-# imports
-import os                 # os is used to get environment variables IP & PORT
-from flask import Flask   # Flask is the web app that we will customize
-from flask import render_template
 
 app = Flask(__name__)     # create an app
 
