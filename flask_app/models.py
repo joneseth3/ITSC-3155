@@ -44,3 +44,5 @@ class Comment(db.Model):
         self.content = content
         self.note_id = note_id
         self.user_id = user_id
+
+        
