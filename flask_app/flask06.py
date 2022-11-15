@@ -13,6 +13,10 @@ from forms import RegisterForm
 from flask import session 
 from flask_bcrypt import Bcrypt
 from forms import LoginForm
+from wtforms import TextAreaField, StringField, PasswordField, SubmitField
+from models import Comment as Comment 
+from forms import RegisterForm, LoginForm, CommentForm
+
 
 
 
@@ -20,6 +24,7 @@ from forms import LoginForm
 app = Flask(__name__) 
 
 bcrypt = Bcrypt(app)
+app.secret_key = "super secret key"
 app.config['SECRETY_KEY'] = 'SE3155'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///flask_note_app.db'
@@ -55,9 +60,15 @@ def get_notes():
 @app.route('/notes/<note_id>')
 def get_note(note_id):
     a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
-    my_note = db.session.query(Note).filter_by(id=note_id).one()
+    
+    if session.get('user'):
+        my_note = db.session.query(Note).filter_by(id=note_id, user_id=session['user_id']).one()
 
-    return render_template('note.html', note = my_note, user = a_user)
+        form = CommentForm()
+
+        return render_template('note.html', note = my_note, user =session['user'], form=form)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/notes/new', methods=['GET','POST'])
 def new_note():
@@ -73,13 +84,12 @@ def new_note():
             today = date.today()
             # format date 
             today = today.strftime("%m-%d-%Y")
-            new_record = Note(title,text, today)
+            new_record = Note(title,text, today, session['user_id'])
             db.session.add(new_record)
             db.session.commit()
 
             return redirect(url_for('get_notes'))
         else:
-            a_user = db.session.query(User).filter_by(email='mogli@uncc.edu')
             return render_template('new.html', user = session['user'])
     else:
         return redirect(url_for('login'))
@@ -128,14 +138,32 @@ def delete_note(note_id):
         return redirect(url_for('login'))
 
 
+@app.route('/notes/<note_id>/comment', methods=['POST'])
+def new_comment(note_id):
+    if session.get('user'):
+        comment_form = CommentForm()
+        # validate_on_submit only validates using POST
+        if comment_form.validate_on_submit():
+            # get comment data
+            comment_text = request.form['comment']
+            new_record = Comment(comment_text, int(note_id), session['user_id'])
+            db.session.add(new_record)
+            db.session.commit()
+
+        return redirect(url_for('get_note', note_id=note_id))
+
+    else:
+        return redirect(url_for('login'))
+
+
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegisterForm()
 
     if request.method == 'POST' and form.validate_on_submit():
         # salt and hash password
-        h_password = bcrypt.hashpw(
-            request.form['password'].encode('utf-8'), bcrypt.gensalt())
+        h_password = bcrypt.generate_password_hash(request.form['password'])
+        
         # get entered user data
         first_name = request.form['firstname']
         last_name = request.form['lastname']
