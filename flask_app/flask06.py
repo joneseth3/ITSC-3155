@@ -189,7 +189,7 @@ def login():
         # we know user exists. We can use one()
         the_user = db.session.query(User).filter_by(email=request.form['email']).one()
         # user exists check password entered matches stored password
-        if bcrypt.checkpw(request.form['password'].encode('utf-8'), the_user.password):
+        if bcrypt.check_password_hash( the_user.password, request.form['password']):
             # password match add user info to session
             session['user'] = the_user.first_name
             session['user_id'] = the_user.id
